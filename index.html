@@ -246,6 +246,7 @@
   no.addEventListener('click',dodge);
   no.addEventListener('touchstart',dodge,{passive:false});
 
+  yes.addEventListener('mouseenter',()=>{if(!answered)msg.textContent=''});
   yes.onclick=()=>{
     answered=true;no.style.display='none';yes.style.transform='';
     msg.textContent='Výborně! Dej vědět organizátorce, ať s tebou počítá. 🍷';
