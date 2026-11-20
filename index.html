@@ -95,9 +95,9 @@
   .row span{font-size:.95rem;opacity:.75}
   .btns{display:flex;gap:1rem;justify-content:center;margin-top:1.2rem;position:relative;height:56px}
   button{font-family:inherit;font-weight:800;font-size:1.1rem;border:0;border-radius:999px;padding:.8rem 1.6rem;cursor:pointer}
-  #yes{background:var(--punch);color:var(--cream);box-shadow:0 6px 0 #9c2a17}
+  #yes{position:relative;z-index:2;background:var(--punch);color:var(--cream);box-shadow:0 6px 0 #9c2a17}
   #yes:active{transform:translateY(4px);box-shadow:0 2px 0 #9c2a17}
-  #no{background:#ddd;color:#555;position:relative;transition:transform .25s}
+  #no{background:#ddd;color:#555;position:relative;z-index:1;transition:transform .25s}
   #msg{min-height:1.6em;margin-top:.9rem;font-weight:600;color:var(--punch)}
   .replay{position:fixed;bottom:16px;right:16px;z-index:5;background:rgba(255,255,255,.12);color:var(--cream);font-size:.9rem;padding:.5rem 1rem}
   .skip{position:fixed;bottom:16px;left:16px;z-index:5;background:transparent;color:var(--cream);opacity:.6;font-size:.9rem;padding:.5rem 1rem}
@@ -230,7 +230,17 @@
     if(e)e.preventDefault();
     if(dodges>=lines.length-1){no.style.display='none';msg.textContent=lines[lines.length-1];yes.style.transform='scale(1.15)';return}
     const card=no.closest('.card').getBoundingClientRect();
-    const dx=(Math.random()-.5)*(card.width-140), dy=-(Math.random()*120+20);
+    // current untransformed position of "Nejdu"
+    const prev=no.style.transform;no.style.transition='none';no.style.transform='';
+    const base=no.getBoundingClientRect();no.style.transform=prev;void no.offsetWidth;no.style.transition='';
+    const y=yes.getBoundingClientRect(),pad=24;
+    let dx=0,dy=0;
+    for(let t=0;t<40;t++){
+      const nx=card.left+16+Math.random()*(card.width-32-base.width);
+      const ny=base.top-(Math.random()*140+30);
+      const hit=nx<y.right+pad&&nx+base.width>y.left-pad&&ny<y.bottom+pad&&ny+base.height>y.top-pad;
+      dx=nx-base.left;dy=ny-base.top;if(!hit)break;
+    }
     no.style.transform=`translate(${dx}px,${dy}px) rotate(${(Math.random()-.5)*30}deg)`;
     msg.textContent=lines[dodges++];
   }
